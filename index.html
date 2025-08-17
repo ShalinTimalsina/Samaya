@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samaya - Learning Hours Tracker</title>
+
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo" onclick="goToHome()">
+                <div class="logo-icon">
+                    <i class="fas fa-stopwatch"></i>
+                </div>
+                <div>
+                    <h1>Samaya</h1>
+                    <p>Simple learning time tracker</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="stats" id="stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalTasks">0</div>
+                    <div class="stat-label">Total Tasks</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="activeTasks">0</div>
+                    <div class="stat-label">Active Tasks</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalTime">00:00:00</div>
+                    <div class="stat-label">Total Time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Task Section -->
+        <div class="add-task-section">
+            <div class="task-form">
+                <div class="search-container">
+                    <label for="searchInput" class="form-label">Search Tasks</label>
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search existing tasks..." />
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                </div>
+                <div class="input-group">
+                    <label for="taskName" class="form-label">Add New Task</label>
+                    <input type="text" id="taskName" class="task-input" placeholder="What are you learning today?"
+                        maxlength="50">
+                </div>
+                <button class="add-btn" onclick="addTask()">
+                    <i class="fas fa-plus"></i>
+                    Add Task
+                </button>
+            </div>
+        </div>
+
+        <!-- Tasks Grid -->
+        <div class="tasks-grid" id="taskList"></div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-brain"></i>
+            <h3>Start Your Learning Journey</h3>
+            <p>Add your first task to begin tracking your progress</p>
+        </div>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+
+</html>
