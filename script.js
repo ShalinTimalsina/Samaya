@@ -21,21 +21,9 @@ class SamayaTracker {
         this.touchStartY = 0;
         this.touchEndY = 0;
 
-        // Common learning topics for suggestions
-        this.commonTopics = [
-            'JavaScript', 'Python', 'React', 'Node.js', 'HTML', 'CSS', 'TypeScript',
-            'Vue.js', 'Angular', 'Java', 'C++', 'PHP', 'Ruby', 'Go', 'Rust',
-            'Machine Learning', 'Data Science', 'Web Development', 'Mobile Development',
-            'DevOps', 'Database', 'SQL', 'MongoDB', 'PostgreSQL', 'Docker',
-            'Kubernetes', 'AWS', 'Azure', 'Git', 'Linux', 'Algorithms',
-            'Data Structures', 'System Design', 'UI/UX Design', 'Graphic Design',
-            'Photography', 'Digital Marketing', 'Project Management', 'Agile',
-            'Scrum', 'Business Analysis', 'Excel', 'PowerBI', 'Tableau',
-            'Mathematics', 'Statistics', 'Physics', 'Chemistry', 'Biology',
-            'Language Learning', 'Spanish', 'French', 'German', 'Mandarin',
-            'Music Theory', 'Guitar', 'Piano', 'Drawing', 'Painting',
-            'Reading', 'Writing', 'Research', 'Meditation', 'Yoga'
-        ];
+        // Common learning topics for suggestions - Empty for production use
+        // Users will build their own suggestion list from their actual tasks
+        this.commonTopics = [];
 
         // Constants
         this.MAX_TASKS = 1000;
@@ -608,6 +596,16 @@ class SamayaTracker {
         }
 
         searchSuggestions.classList.add('show');
+
+        // Add scroll indicator if content exceeds the 3-item tile height
+        setTimeout(() => {
+            const hasScroll = searchSuggestions.scrollHeight > searchSuggestions.clientHeight;
+            if (hasScroll) {
+                searchSuggestions.classList.add('has-scroll');
+            } else {
+                searchSuggestions.classList.remove('has-scroll');
+            }
+        }, 10);
     }
 
     addTaskSuggestions(matchingTasks, container) {
@@ -678,21 +676,38 @@ class SamayaTracker {
     }
 
     updateSelectedSuggestion() {
+        const searchSuggestions = document.getElementById('searchSuggestions');
         const suggestions = document.querySelectorAll('.suggestion-item');
         suggestions.forEach(suggestion => suggestion.classList.remove('active'));
 
         if (this.selectedSuggestionIndex >= 0 && this.selectedSuggestionIndex < suggestions.length) {
-            suggestions[this.selectedSuggestionIndex].classList.add('active');
-            suggestions[this.selectedSuggestionIndex].scrollIntoView({
-                block: 'nearest',
-                behavior: 'smooth'
-            });
+            const selectedItem = suggestions[this.selectedSuggestionIndex];
+            selectedItem.classList.add('active');
+
+            // Ensure the selected item is visible within the dropdown container
+            const containerRect = searchSuggestions.getBoundingClientRect();
+            const itemRect = selectedItem.getBoundingClientRect();
+
+            // Calculate if item is outside the visible area
+            const itemTop = itemRect.top - containerRect.top;
+            const itemBottom = itemRect.bottom - containerRect.top;
+            const containerHeight = containerRect.height;
+
+            // Scroll only within the dropdown, not the entire page
+            if (itemTop < 0) {
+                // Item is above visible area
+                searchSuggestions.scrollTop += itemTop;
+            } else if (itemBottom > containerHeight) {
+                // Item is below visible area
+                searchSuggestions.scrollTop += (itemBottom - containerHeight);
+            }
         }
     }
 
     hideSearchSuggestions() {
         const searchSuggestions = document.getElementById('searchSuggestions');
         searchSuggestions.classList.remove('show');
+        searchSuggestions.classList.remove('has-scroll');
     }
 
     /* =====================================================
@@ -1055,11 +1070,23 @@ class SamayaTracker {
     }
 
     closeOpenMenus(event) {
+        // Close task dropdown menus
         document.querySelectorAll('.task-dropdown.show').forEach(menu => {
             if (!menu.parentElement.contains(event.target)) {
                 menu.classList.remove('show');
             }
         });
+
+        // Close search suggestions if clicking outside
+        const searchSuggestions = document.getElementById('searchSuggestions');
+        const searchContainer = document.querySelector('.search-container');
+
+        if (searchSuggestions && searchContainer &&
+            !searchContainer.contains(event.target) &&
+            searchSuggestions.classList.contains('show')) {
+            searchSuggestions.classList.remove('show');
+            this.selectedSuggestionIndex = -1;
+        }
     }
 
     confirmDeleteTask(id, event) {
