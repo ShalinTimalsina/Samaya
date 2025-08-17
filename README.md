@@ -25,7 +25,7 @@ LocalStorage (for saving task data)
 🚀 Installation / Setup
 
 Clone this repository:
-git clone https://github.com/your-username/Samaya.git
+git clone https://github.com/ShalinTimalsina/Samaya.git
 
 Open index.html in your browser.
 
